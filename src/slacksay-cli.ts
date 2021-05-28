@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { gatherArgs, webhookUrlEnvVar } from "./gather-args";
 import { sendMessage } from "./slacksay";
+import readline from "readline";
 
 (async function main() {
     const args = gatherArgs({
@@ -9,8 +10,24 @@ import { sendMessage } from "./slacksay";
     if (!args["webhook-url"]) {
         throw new Error(`webhook-url not specified on the cli or set via env var ${webhookUrlEnvVar}`);
     }
-    if (!args.message) {
-        throw new Error(`reading from stdin not yet implemented - specify --message`);
+    const sender = sendMessage.bind(null, args["webhook-url"]);
+    if (args.message) {
+        await sender(args.message);
+        return;
     }
-    await sendMessage(args["webhook-url"], args.message);
+    // try to read from stdin
+    const lineReader = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: false
+    });
+
+    let lastSend = Promise.resolve();
+
+    await new Promise((resolve, reject) => {
+        lineReader.on("close", resolve);
+        lineReader.on("line", line => {
+            lastSend = lastSend.then(() => sender(line));
+        });
+    });
 })();

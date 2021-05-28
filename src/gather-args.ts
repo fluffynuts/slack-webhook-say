@@ -18,6 +18,7 @@ see https://api.slack.com/messaging/webhooks#enable_webhooks for information on 
     ).option("webhook-url", {
         alias: "u",
         type: "string",
+        default: process.env[webhookUrlEnvVar],
         description: `set the webhook url to use, can be set by environment variable ${webhookUrlEnvVar}`
     }).option("message", {
         alias: "m",
