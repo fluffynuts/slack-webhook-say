@@ -1,6 +1,6 @@
 {
   "name": "slack-webhook-say",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "provides a command-line interface for posting messages to slack via webhooks",
   "main": "index.js",
   "scripts": {
