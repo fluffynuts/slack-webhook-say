@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { gatherArgs, webhookUrlEnvVar } from "./gather-args";
-import { sendMessage } from "./slacksay";
+import { sendMessage } from "./send-message";
 import readline from "readline";
 
 (async function main() {
@@ -10,7 +10,7 @@ import readline from "readline";
     if (!args["webhook-url"]) {
         throw new Error(`webhook-url not specified on the cli or set via env var ${webhookUrlEnvVar}`);
     }
-    const sender = sendMessage.bind(null, args["webhook-url"]);
+    const sender = sendMessage.bind(null, args["webhook-url"], args.echo);
     if (args.message) {
         await sender(args.message);
         return;
