@@ -27,6 +27,7 @@ see https://api.slack.com/messaging/webhooks#enable_webhooks for information on 
         description: "provide the message to send when omitted, will be read from stdin"
     }).option("echo", {
         type: "boolean",
+        alias: "e",
         default: false,
         description: "echo input to stdout - useful if run within automated processes with logging"
     }).argv;
