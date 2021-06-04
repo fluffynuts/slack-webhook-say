@@ -1,20 +1,33 @@
 import bent, { RequestFunction, ValidResponse } from "bent";
+import { ErrorHandlingStrategies, eventually } from "@codeo/eventually";
+import { Configuration } from "./gather-args";
+
 type Dictionary<T> = {
     [key: string]: T;
 }
 const bentCache: Dictionary<RequestFunction<ValidResponse>> = {
 };
 
+export type SendMessageFunction = (config: Configuration, message: string) => Promise<void>;
+
 export async function sendMessage(
-    webhookUrl: string,
-    echo: boolean,
+    config: Configuration,
     message: string
-) {
-    const post = postFunctionFor(webhookUrl);
-    await post("", {
+): Promise<void> {
+    const post = postFunctionFor(config["webhook-url"]);
+    let failed = false;
+    await eventually(() => post("", {
         text: message
+    }), {
+        retries: config.retries,
+        backoff: [ 250, 500, 1000, 2000 ],
+        fail: async (e: Error) => {
+            failed = true;
+            console.error(`Unable to send message:\n"${message}"\n${e}`);
+            return ErrorHandlingStrategies.suppress;
+        }
     });
-    if (echo) {
+    if (!failed && config.echo) {
         console.log(message);
     }
 }

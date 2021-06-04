@@ -17,8 +17,9 @@
     "prerelease-beta": "run-s build lint test",
     "release-beta": "cross-env BETA=1 VERSION_INCREMENT_STRATEGY=patch run-s \"zarro release-npm\"",
     "start": "ts-node src/slacksay-cli.ts",
-    "integration-multi": "ts-node integration-tests/send-many-messages.ts | npm start",
-    "integration-multi-npx": "ts-node integration-tests/send-many-messages.ts | npx slack-webhook-say"
+    "integration-multi": "ts-node integration-tests/generate-many-messages.ts | npm start",
+    "integration-batched": "ts-node integration-tests/generate-many-messages.ts | npm start -- --batch-size 3",
+    "integration-multi-npx": "ts-node integration-tests/generate-many-messages.ts | npx slack-webhook-say"
   },
   "keywords": [],
   "author": {
@@ -50,6 +51,7 @@
     "zarro": "^1.91.0"
   },
   "dependencies": {
+    "@codeo/eventually": "^1.2.0",
     "bent": "^7.3.12",
     "yargs": "^17.0.1"
   },
